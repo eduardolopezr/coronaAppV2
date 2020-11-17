@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //IMPORTAMOS COMPONENTES
 import ButtonLogin from '../components/ButtonLogin';
@@ -17,7 +18,10 @@ export default function Main({navigation}) {
     function goToSignIn(){
         navigation.navigate("SignIn");
     }
-
+    function login(){
+        navigation.navigate("Menu");
+        console.log("Entré");
+    }
     return (
       <View style={styles.container}>
   
@@ -29,7 +33,7 @@ export default function Main({navigation}) {
         <TextInput style={styles.inputLogin} placeholder="Password" secureTextEntry={true}></TextInput>
   
         
-        <ButtonLogin text="Iniciar sesión" color="#e55039"/>
+        <ButtonLogin text="Iniciar sesión" color="#e55039" action={login}/>
   
         <SignInLink text="No tengo una cuenta" action={goToSignIn}/>
   

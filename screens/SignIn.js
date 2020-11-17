@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput} from 'react-native';
 import React, {useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //IMPORTAMOS COMPONENTES
 import ButtonLogin from '../components/ButtonLogin';
@@ -15,6 +16,31 @@ export default function SignIn({navigation}) {
       function goToLogin(){
         navigation.navigate("Main");
     }
+    const [firstName, setName] =  useState("");
+    const [lastName, setlastName] =  useState("");
+    const [userName, setUserName] =  useState("");
+    const [password, setPassword] =  useState("");
+   
+    
+    async function signIn(){
+        const data = {
+            name: firstName,
+            lastName: lastName,
+            userName: userName,
+            password: password
+          }
+          try {
+            await AsyncStorage.setItem("data", JSON.stringify(data));
+            console.log("Se guardaron los datos");
+
+            const loadData =  await AsyncStorage.getItem("data");
+            console.log(JSON.parse(loadData));
+            
+          } catch (e) {
+            console.log(e);
+            console.log("Algo salió mal");
+          }
+    }
     return (
       <View style={styles.container}>
   
@@ -22,13 +48,13 @@ export default function SignIn({navigation}) {
   
         <Text style={styles.message}>¡Que gusto verte de nuevo!</Text>
         
-        <TextInput style={styles.inputLogin} placeholder="Nombre"></TextInput>
-        <TextInput style={styles.inputLogin} placeholder="Apellido"></TextInput>
-        <TextInput style={styles.inputLogin} placeholder="Usuario"></TextInput>
-        <TextInput style={styles.inputLogin} placeholder="Password" secureTextEntry={true}></TextInput>
+        <TextInput onChangeText={setName} style={styles.inputLogin} placeholder="Nombre"></TextInput>
+        <TextInput onChangeText={setlastName}style={styles.inputLogin} placeholder="Apellido"></TextInput>
+        <TextInput onChangeText={setUserName} style={styles.inputLogin} placeholder="Usuario"></TextInput>
+        <TextInput onChangeText={setPassword} style={styles.inputLogin} placeholder="Password" secureTextEntry={true}></TextInput>
   
         
-        <ButtonLogin text="Registrarse" color="#e55039"/>
+        <ButtonLogin text="Registrarse" color="#e55039" action={signIn}/>
   
         <SignInLink text="¡Ya tengo una cuenta!" action={goToLogin}/>
   
