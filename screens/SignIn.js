@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 //IMPORTAMOS COMPONENTES
 import SignInLink from '../components/SignInLink';
@@ -29,16 +30,38 @@ export default function SignIn({navigation}) {
             userName: userName,
             password: password
           }
-          try {
-            await AsyncStorage.setItem("data", JSON.stringify(data));
-            console.log("Se guardaron los datos");
-
-            const loadData =  await AsyncStorage.getItem("data");
-            console.log(JSON.parse(loadData));
+          if(data.name && data.lastName && data.userName && data.password){
+            try {
+              await AsyncStorage.setItem("data", JSON.stringify(data));
+              Alert.alert(
+                "¡Registro exitoso!",
+                "¡Usuario registrado correctamente!",
+                [
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+              );
+              console.log("Se guardaron los datos");
+  
+              const loadData =  await AsyncStorage.getItem("data");
+              console.log(JSON.parse(loadData));
+              navigation.navigate("Login");
+              
+            } catch (e) {
+              console.log(e);
+              console.log("Algo salió mal");
+            }
+          }else{
+             Alert.alert(
+                "¡Datos incompletos!",
+                "Revisa que hayas llenado por completo los campos",
+                [
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+              );
+            console.log("Datos incompletos");
             
-          } catch (e) {
-            console.log(e);
-            console.log("Algo salió mal");
           }
     }
     return (

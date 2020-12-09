@@ -22,40 +22,64 @@ export default function Salidas({navigation}) {
   const [ regreso, setRegreso ] = useState("");
   const [ descrip, setDescrip ] = useState("");
 
-  async function salidas(){
+  async function guardar(){
     const data = {
       destinoL: destino,
       salidaH: salida,
       regresoH: regreso,
       descripc: descrip
     }
+    if(destino && salida && regreso && descrip){
+      try {
+        await AsyncStorage.setItem("salidas", JSON.stringify(data));
+      
+        const loadData =  await AsyncStorage.getItem("salidas");
+        let data2 = JSON.parse(loadData);
 
-    try {
-      await AsyncStorage.setItem("data", JSON.stringify(data));
-      console.log("Se guardaron los datos...");
+        Alert.alert(
+          "¡Datos ingresados!",
+          "Los datos se han guardado correctamente",
+          [
+            { text: "OK", onPress: () => console.log(data2) }
+          ],
+          { cancelable: false }
+        );
+          navigation.navigate("CoronAppV2");
+        console.log("Se guardaron los datos...");
+      }
+      catch(e) {
+        console.log(e);
+        console.log(":(");
+      }
+    }else{
+      Alert.alert(
+        "¡Datos incompletos!",
+        "Revisa que hayas llenado por completo los campos",
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+      console.log("Datos incompletos");
     }
-    catch(e) {
-      console.log(e);
-    }
-      navigation.navigate("CoronAppV2");
   }
 
-  function Guardar(){
-    Alert.alert(
-      'Guardar',
-      '¿Deseas guardar los cambios?',
-      [
-        {
-          text: 'cancelar',
-          onPress: () => console.log("Sin cambios")
-        },
-        {
-          text: 'Aceptar',
-          onPress: () => console.log("Cambios guardados")
-        }
-      ]
-    )
-  }
+  // function Guardar(){
+  //   Alert.alert(
+  //     'Guardar',
+  //     '¿Deseas guardar los cambios?',
+  //     [
+  //       {
+  //         text: 'cancelar',
+  //         onPress: () => console.log("Sin cambios")
+  //       },
+  //       {
+  //         text: 'Aceptar',
+  //         onPress: () => console.log("Cambios guardados")
+  //       }
+  //     ]
+  //   )
+  // }
 
   return (
     <View style={styles.container}>
@@ -82,7 +106,7 @@ export default function Salidas({navigation}) {
         placeholder="Descripción..."/>
       </View>
       <View style={styles.sBoton}>
-        <ButtonStyle text={"Guardar"} action={Guardar} />
+        <ButtonStyle text={"Guardar"} action={guardar} />
       </View>      
       <StatusBar style={"light"}/>
     </View>

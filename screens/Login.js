@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, Image, View, TextInput } from 'react-native';
+import { StyleSheet, Text, Image, View, TextInput, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ButtonStyle from '../components/ButtonStyle';
 import SignInLink from '../components/SignInLink';
@@ -19,11 +20,51 @@ export default function Login({navigation}) {
 
   function goToSignIn(){
     navigation.navigate("SignIn");
-    console.log("Entre");
   }
-  function goToCoron(){
-    navigation.navigate("CoronAppV2")
+  const [userName2, setUserName] =  useState("");
+  const [password2, setPassword] =  useState("");
+
+
+ async function logIn(){
+    if(userName2 && password2){
+      try {
+        const loadData =  await AsyncStorage.getItem("data");
+        let data = JSON.parse(loadData);
+
+          if(data.userName==userName2 && data.password==password2){
+            console.log("Bienvenido! " + data.userName);
+            navigation.navigate("CoronAppV2");
+          }else{
+            Alert.alert(
+              "Datos erroneos",
+              "¡Usuario y/o Contraseña incorrectos!",
+              [
+                { text: "OK", onPress: () => console.log("OK Pressed") }
+              ],
+              { cancelable: false }
+            );
+          }
+        console.log(data.userName + data.password);
+      } catch (e) {
+        console.log(e);
+        console.log("Algo salió mal");
+      }
+    }else{
+      
+      Alert.alert(
+        "Datos incompletos",
+        "Comprueba que hayas llenado todos los campos",
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+
+    }
   }
+  // function goToCoron(){
+  //   navigation.navigate("CoronAppV2")
+  // }
 
   return (
     <View style={styles.container}>
@@ -31,15 +72,15 @@ export default function Login({navigation}) {
         
         <Text style={styles.login_header}>¡Que gusto verte de nuevo!</Text>
         
-        <TextInput 
+        <TextInput onChangeText={setUserName}
         style={styles.input_login} 
         placeholder= "Usuario"/>
-        <TextInput 
+        <TextInput onChangeText={setPassword}
         style={styles.input_login}
         placeholder="Password"
         secureTextEntry={true}/>
       
-      <ButtonStyle text={"Iniciar Sesión"} action={goToCoron} />
+      <ButtonStyle text={"Iniciar Sesión"} action={logIn} />
       <SignInLink text={"No tengo una cuenta"} action={goToSignIn} />
     </View>
   );

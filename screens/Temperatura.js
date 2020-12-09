@@ -22,41 +22,42 @@ export default function Temperatura({navigation}) {
   const [ fecha, setFecha ] = useState("");
   const [ descrip, setDescrip ] = useState("");
 
-  async function temperatura(){
+  async function guardar(){
     const data = {
       gradosC: grados,
       horas: hora,
       fechas: fecha,
       descripc: descrip
     }
-
-    try {
-      await AsyncStorage.setItem("data", JSON.stringify(data));
-      console.log("Se guardaron los datos...");
+    if(grados && hora && fecha && descrip){
+      try {
+        await AsyncStorage.setItem("temperatura", JSON.stringify(data));
+        const loadData =  await AsyncStorage.getItem("temperatura");
+        let data2 = JSON.parse(loadData);
+        Alert.alert(
+          "¡Datos ingresados!",
+          "Los datos se han guardado correctamente",
+          [
+            { text: "OK", onPress: () => console.log(data2) }
+          ],
+          { cancelable: false }
+        );
+        navigation.navigate("CoronAppV2");
+      }
+      catch(e) {
+        console.log("Ocurrió un error. Vuelve a intentar");
+      }
+    }else{
+      Alert.alert(
+        "¡Campos incompletos!",
+        "Asegurate de que hayas llenado todos los campos",
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
     }
-    catch(e) {
-      console.log(e);
-    }
-      navigation.navigate("CoronAppV2");
   }
-
-  function Guardar(){
-    Alert.alert(
-      'Guardar',
-      '¿Deseas guardar los cambios?',
-      [
-        {
-          text: 'cancelar',
-          onPress: () => console.log("Sin cambios")
-        },
-        {
-          text: 'Aceptar',
-          onPress: () => console.log("Cambios guardados")
-        }
-      ]
-    )
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -82,7 +83,7 @@ export default function Temperatura({navigation}) {
         placeholder="Descripción..."/>
       </View>
       <View style={styles.sBoton}>
-        <ButtonStyle text={"Guardar"} action={Guardar} />
+        <ButtonStyle text={"Guardar"} action={guardar} />
       </View>      
       <StatusBar style={"light"}/>
     </View>
